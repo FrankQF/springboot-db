@@ -5,4 +5,10 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: root
+#  jackson:
+#    serialization:
+#      indent-output: true
+#  data:
+#    rest:
+#      base-path: /api
 
