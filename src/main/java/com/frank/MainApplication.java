@@ -3,10 +3,11 @@ package com.frank;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
+@EnableCaching
 @SpringBootApplication
 public class MainApplication {
 

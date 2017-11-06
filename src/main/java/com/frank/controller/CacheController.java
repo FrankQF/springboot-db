@@ -8,20 +8,35 @@ import org.springframework.web.bind.annotation.RestController;
 import com.frank.entity.Person;
 import com.frank.service.DemoService;
 
+
 @RestController
-public class MyController {
+public class CacheController {
+	
 	@Autowired
 	DemoService demoService;
 	
-	@RequestMapping("/rollback")//此处要加@RequestBody 否则接收不到person的json请求
-	public Person rollback(@RequestBody Person person){ //1
-		return demoService.savePersonWithRollBack(person);
-	}
 	
-	@RequestMapping("/norollback")
-	public Person noRollback(@RequestBody Person person){//2
-		return demoService.savePersonWithoutRollBack(person);
+	@RequestMapping("/put")
+	public Person put(Person person){
+		return demoService.save(person);
 		
 	}
+
+	
+	@RequestMapping("/able")
+	public Person cacheable(@RequestBody Person person){
+		
+		
+		return demoService.findOne(person);
+		
+	}
+	
+	@RequestMapping("/evit")
+	public String  evit(Long id){
+		 demoService.remove(id);
+		 return "ok";
+		
+	}
+	
 
 }

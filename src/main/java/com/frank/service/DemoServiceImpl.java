@@ -1,8 +1,11 @@
 package com.frank.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.frank.dao.PersonRepository;
 import com.frank.entity.Person;
@@ -10,25 +13,28 @@ import com.frank.entity.Person;
 @Service
 public class DemoServiceImpl implements DemoService {
 	@Autowired
-	PersonRepository personRepository; //1直接注入Bean
-	
-//	@Transactional(rollbackFor={IllegalArgumentException.class}) //2
-	public Person savePersonWithRollBack(Person person){
-		Person p =personRepository.save(person);
+	PersonRepository personRepository;
 
-		if(person.getName().equals("汪云飞")){
-			throw new IllegalArgumentException("汪云飞已存在，数据将回滚"); //3throw异常，事务回滚
-		}
+	@Override
+	@CachePut(value = "people", key = "#person.id")//缓存新增或者更新数据到缓存，名称为people，数据的key是person的id
+	public Person save(Person person) {
+		Person p = personRepository.save(person);
+		System.out.println("为id、key为:"+p.getId()+"数据做了缓存");
 		return p;
 	}
 
-	@Transactional(noRollbackFor={IllegalArgumentException.class}) //4设置不回滚数据
-	public Person savePersonWithoutRollBack(Person person){
-		Person p =personRepository.save(person);
-		
-		if(person.getName().equals("汪云飞")){
-			throw new IllegalArgumentException("汪云飞虽已存在，数据将不会回滚");
-		}
+	@Override
+	@CacheEvict(value = "people")//2从缓存people中删除key为id的数据
+	public void remove(Long id) {
+		System.out.println("删除了id、key为"+id+"的数据缓存");
+		//这里不做实际删除操作
+	}
+
+	@Override
+	@Cacheable(value = "people", key = "#person.id")//缓存key为person的id数据到缓存people中
+	public Person findOne(Person person) {
+		Person p = personRepository.findOne(person.getId());
+		System.out.println("为id、key为:"+p.getId()+"数据做了缓存");
 		return p;
 	}
 }
